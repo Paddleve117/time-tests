@@ -1,4 +1,5 @@
 from times import compute_overlap_time, time_range
+import pytest
 
 def test_generic_case():
     large = time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00")
@@ -27,3 +28,9 @@ def test_touching_intervals_no_overlap(): # 边界接触但不重叠的时间范
     b = time_range("2021-06-01 10:30:00", "2021-06-01 11:00:00", 1)
     # touching at 10:30:00 -> should be considered no overlap (zero-length)
     assert compute_overlap_time(a, b) == []
+
+def test_time_range_backwards(): # 测试时间范围反向
+    # end_time earlier than start_time should raise ValueError
+    with pytest.raises(ValueError) as exc:
+        time_range("2020-01-02 10:00:00", "2020-01-01 10:00:00", 1)
+    assert "before start_time" in str(exc.value)
